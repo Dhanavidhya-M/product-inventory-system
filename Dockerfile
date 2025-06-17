@@ -1,28 +1,27 @@
-# Stage 1: Build the application
-FROM maven:3.8.1-openjdk-17 AS builder
+xspring.application.name=Rental-System
  
-# Set the working directory inside the container
-WORKDIR /app
+#spring.datasource.url = jdbc:mysql://localhost:3306/rental_db?createDatabaseIfNotExist=true
+#spring.datasource.username = root
+#spring.datasource.password = root
+spring.datasource.driverClassName = com.mysql.jdbc.Driver
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.hibernate.dialect = org.hibernate.dialect.MySQL8Dialect
+spring.jpa.generate-ddl = true
+spring.jpa.show-sql = true
  
-# Copy the pom.xml and download dependencies
-COPY pom.xml .
-RUN mvn dependency:go-offline -B
  
-# Copy the rest of the application source code and build the application
-COPY src ./src
-RUN mvn clean package -DskipTests
+#server.port = 5000
  
-# Stage 2: Create the runtime image
-FROM openjdk:17
  
-# Set the working directory inside the container
-WORKDIR /app
  
-# Copy the built jar file from the build stage
-COPY --from=builder /app/target/*.jar demo.jar
  
-# Expose the application port
-EXPOSE 9093:8080
+server.port= 8080
  
-# Define the entrypoint to run the application
-ENTRYPOINT ["java", "-jar", "demo.jar"]
+ 
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.url=jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:test}
+spring.datasource.username=${MYSQL_USER:root}
+spring.datasource.password=${MYSQL_PASSWORD:root}
+ 
+logging.level.root=ERROR
+ 
